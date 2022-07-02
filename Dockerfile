@@ -1,14 +1,17 @@
-# Use uma Imagem Official do Python
-FROM python:rc-slim
-
-# Definindo o diretório onde a aplicação será armazenada
+# build environment
+FROM node:14-alpine as react-build
 WORKDIR /app
+COPY . ./
+RUN yarn
+RUN yarn build
 
-# Copiar os arquivos da pasta local para dentro do container
-COPY . /app
+# server environment
+FROM nginx:alpine
+COPY nginx.conf /etc/nginx/conf.d/configfile.template
 
-# Instalar as dependências de Python de acordo com o que foi desenvolvido na aplicação e que está declarado no arquivo requirements.txt.
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+COPY --from=react-build /app/build /usr/share/nginx/html
 
-# Garante que será iniciado a aplicação.
-CMD ["gunicorn", "app:app"]
+ENV PORT 8080
+ENV HOST 0.0.0.0
+EXPOSE 8080
+CMD sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/configfile.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
