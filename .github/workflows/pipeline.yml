@@ -39,7 +39,7 @@ jobs:
       - name: Deploy Frontend no  Cloud Run
         id: deploy
         run: |-
-          gcloud run deploy frontend \
+          gcloud run deploy spotfront \
             --quiet \
             --region us-central1 \
             --image ${{ secrets.ARTIFACT_REGISTRY }}/spotfront:latest \
