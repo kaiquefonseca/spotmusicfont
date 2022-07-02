@@ -35,10 +35,7 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-      - name: Deploy to Cloud run
-        id: cloudrun
-        env:
-          ARTIFACT_REGISTRY: ${{ secrets.ARTIFACT_REGISTRY }}
+      
       - name: Deploy Frontend no  Cloud Run
         id: deploy
         run: |-
