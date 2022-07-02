@@ -39,7 +39,7 @@ jobs:
         id: cloudrun
         env:
           ARTIFACT_REGISTRY: ${{ secrets.ARTIFACT_REGISTRY }}
-        run: gcloud run deploy --image gcr.io/us-central1-docker.pkg.dev/hackathon-7aso-grupo-01/labhackathon/spotfront:latest/cra-cloud-run --platform managed
+        run: gcloud run deploy --image gcr.io/spotfront/cra-cloud-run --platform managed
 
       - name: Prod Test
         run: 'curl "${{ steps.appengine.outputs.url }}"'
