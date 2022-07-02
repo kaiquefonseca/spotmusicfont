@@ -1,5 +1,5 @@
 # Nome do Workflow
-name: SpotMusic Front Pipeline
+name: Spotmusic Front Pipeline
 # Evento que irá acionar a pipeline
 on:
   push:
@@ -21,9 +21,10 @@ jobs:
         env:
           ARTIFACT_REGISTRY: ${{ secrets.ARTIFACT_REGISTRY }}
         run: |
-          docker build -t ${{ secrets.ARTIFACT_REGISTRY }}/myapp:latest .
-          docker push ${{ secrets.ARTIFACT_REGISTRY }}/myapp:latest
+          docker build -t ${{ secrets.ARTIFACT_REGISTRY }}/spotfront:latest .
+          docker push ${{ secrets.ARTIFACT_REGISTRY }}/spotfront:latest
   DeployProd:
+    needs: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -38,8 +39,9 @@ jobs:
         id: cloudrun
         env:
           ARTIFACT_REGISTRY: ${{ secrets.ARTIFACT_REGISTRY }}
-        uses: google-github-actions/deploy-cloudrun@v0.4.0
+        uses: google-github-actions/deploy-cloudrun@v0.10.0
         with:
-          image_url: ${{ secrets.ARTIFACT_REGISTRY }}/myapp:latest
+          service: 'spotfront'
+          image: 'us-central1-docker.pkg.dev/hackathon-7aso-grupo-01/labhackathon/spotfront:latest'
       - name: Prod Test
         run: 'curl "${{ steps.appengine.outputs.url }}"'
